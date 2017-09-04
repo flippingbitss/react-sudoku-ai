@@ -1,0 +1,159 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.content-body{
+  display: flex;
+  justify-content: center;
+}
+
+.main{
+width: 300px;
+height: 300px;
+min-width: 100px;
+min-height: 100px;
+border: 5px solid gainsboro;
+}
+
+.board{
+  border: 1px solid black;
+  background: whitesmoke;
+  display: flex;
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+.board .row{
+  display: flex;
+  flex-direction: row;
+  flex-grow:1;
+  align-content: stretch;
+  flex-basis: 0;
+}
+
+/* .board .board {
+   flex-direction: col
+} */
+
+/* .board .board .row {
+  flex-direction: row;
+} */
+
+.board .square {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  border: 1px solid black;
+  box-sizing: border-box;
+  font-size: calc(16px + 1vw);
+}
+
+.board .board .square.fixed{
+  background-color: #c5c5c5;
+}
+
+.board .square {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
+}
+
+.error{
+  color: red;
+}
+
+.valid {
+  color: green;
+}
+
+.board .board{
+  border: none;
+}
+
+.num-value{
+  height: 100%;
+  border: none;
+  box-sizing: border-box;
+  background-color: transparent;
+  font-size: calc(16px + 1vw);
+  width: 100%;
+  text-align: center;
+}
+
+.num-value:focus, .num-value:active{
+  outline:  3px solid burlywood;
+}
+
+.square .square {
+  /* border: none; */
+  background-color: lightyellow;
+}
+/* 
+.board .row .square:nth-child(n) {
+  border-right: none;
+} */
+
+@media (max-width: 200px) {
+  .main {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+
+@media (min-width: 200px) {
+  .main {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+@media (min-width: 400px) {
+  .main {
+    width: 300px;
+    height: 300px;
+  }
+}
+@media (min-width: 800px) {
+  .main {
+    width: 500px;
+    height: 500px;
+  }
+}
+
+
+@media (min-width: 1000px) {
+  .main {
+    width: 600px;
+    height: 600px;
+  }
+}
