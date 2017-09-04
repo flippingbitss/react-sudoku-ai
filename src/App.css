@@ -87,6 +87,10 @@ border: 5px solid gainsboro;
   flex-basis: 0;
 }
 
+.fixed.valid{
+  color:#2D2D2D;
+}
+
 .error{
   color: red;
 }
@@ -114,13 +118,14 @@ border: 5px solid gainsboro;
 }
 
 .square .square {
-  /* border: none; */
   background-color: lightyellow;
 }
-/* 
-.board .row .square:nth-child(n) {
-  border-right: none;
-} */
+
+.controls{
+  margin-top: 50px;
+}
+
+
 
 @media (max-width: 200px) {
   .main {

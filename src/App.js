@@ -38,28 +38,33 @@ class SudokuApp extends Component {
           writable: num < 1
         },
         state: {
-          value: "valid"
+          value: "valid",
+          writable:true
         }
       });
 
       return meta;
     });
 
+  togglePause=()=>{
+    if(this.state.gameState == STATES.PAUSED)
+      this.setState({gameState: STATES.PROGRESS});
+    else
+      this.setState({gameState: STATES.PAUSED});
+  }
+
   handleTextInput = (index, e) => {
     console.log(e);
     let newBoard = this.state.board.slice();
     let curr = newBoard[index];
 
-    curr.value = e.target.value;
+    curr.value = parseInt(e.target.value);
 
     // column and row number of the active element
     let col = index % 9;
     let row = Math.floor(index / 9);
 
     let matches = [];
-    console.log(index);
-    console.log("column");
-
     // validating the column 
     for (let i = col; i < 81; i += 9) {
       let toMatch = newBoard[i];
@@ -68,8 +73,6 @@ class SudokuApp extends Component {
         matches.push(i);
       }
     }
-
-    console.log("row");
 
     // validating the row
     for (let i = row * 9; i < (row + 1) * 9; ++i) {
@@ -80,11 +83,9 @@ class SudokuApp extends Component {
       }
     }
 
-
     // validating the 9x9 block
     let blockRow = Math.floor(index / 27);
     let blockCol = Math.floor((index % 9) / 3);
-    console.log("block", blockRow, blockCol);
 
     for (let i = blockRow * 27; i < (blockRow + 1) * 27; i += 9) {
       for (let j = blockCol * 3; j < (blockCol + 1) * 3; ++j) {
@@ -93,11 +94,19 @@ class SudokuApp extends Component {
           matches.push(i + j);
         }
       }
-      console.log();
     }
-    console.log(matches);
 
-    this.setState({board: newBoard})
+    // reseting the state of each element
+    let emptyCount = 0;
+    for(let item of newBoard){
+      item.state = "valid"
+      if(item.value==0) emptyCount++;
+    }
+    
+    for(let item of matches)
+      newBoard[item].state = "error"
+
+    this.setState({board: newBoard, gameState: emptyCount ? STATES.WON : STATES.PROGRESS})
   };
 
   generateBoard = (isRoot, counter) => {
@@ -132,7 +141,7 @@ class SudokuApp extends Component {
                     );
 
                   return (
-                    <div key={j} className="square fixed">
+                    <div key={j} className={`square fixed ${elem.state}`}>
                       {elem.value}
                     </div>
                   );
@@ -143,7 +152,12 @@ class SudokuApp extends Component {
     );
   };
 
+  generatePauseScreen=()=>{
+    return <div><h2>PAUSED</h2></div>
+  }
+
   render() {
+    const {gameState} = this.state
     return (
       <div className="App">
         <div className="App-header">
@@ -152,7 +166,23 @@ class SudokuApp extends Component {
         </div>
 
         <div className="content-body">
-          <div className="main">{this.generateBoard(true, 0)}</div>
+          <div className="main">{
+            gameState== STATES.PAUSED ? 
+            this.generatePauseScreen() : 
+            this.generateBoard(true, 0)}
+            
+            <div className="notes"> 
+            {gameState == STATES.WON && <div>
+              <h2>VICTORY</h2>
+              </div>}
+            </div>
+
+            <div className="controls">
+              <button onClick={this.togglePause}>PAUSE</button>
+            </div>
+
+            
+            </div>
         </div>
       </div>
     );
