@@ -5,8 +5,10 @@ import "./App.css";
 const STATES = {
   WON: "WON",
   PROGRESS: "PROGRESS",
-  PAUSED: "PAUSED"
+  PAUSED: "PAUSED",
+  PRESTART: "PRESTART"
 };
+
 
 class SudokuApp extends Component {
   constructor(props, context) {
@@ -14,11 +16,10 @@ class SudokuApp extends Component {
 
     this.state = {
       board: this.board,
-      current: {
-        value: "",
-        index: -1
-      },
-      gameState: STATES.PROGRESS
+      gameState: STATES.PRESTART,
+      startTime: Date.now(),
+      currentTime: Date.now(),
+      interval: null
     };
   }
 
@@ -26,9 +27,8 @@ class SudokuApp extends Component {
     .split("")
     .map((val, i) => {
       let num = Number(val);
-      let meta = {};
 
-      Object.defineProperties(meta, {
+      return  Object.defineProperties({}, {
         editable: {
           value: num < 1,
           writable: false
@@ -39,19 +39,16 @@ class SudokuApp extends Component {
         },
         state: {
           value: "valid",
-          writable:true
+          writable: true
         }
       });
-
-      return meta;
     });
 
-  togglePause=()=>{
-    if(this.state.gameState == STATES.PAUSED)
-      this.setState({gameState: STATES.PROGRESS});
-    else
-      this.setState({gameState: STATES.PAUSED});
-  }
+  togglePause = () => {
+    if (this.state.gameState == STATES.PAUSED)
+      this.setState({ gameState: STATES.PROGRESS });
+    else this.setState({ gameState: STATES.PAUSED });
+  };
 
   handleTextInput = (index, e) => {
     console.log(e);
@@ -65,7 +62,7 @@ class SudokuApp extends Component {
     let row = Math.floor(index / 9);
 
     let matches = [];
-    // validating the column 
+    // validating the column
     for (let i = col; i < 81; i += 9) {
       let toMatch = newBoard[i];
       console.log(i, curr.value, toMatch.value);
@@ -98,24 +95,30 @@ class SudokuApp extends Component {
 
     // reseting the state of each element
     let emptyCount = 0;
-    for(let item of newBoard){
-      item.state = "valid"
-      if(item.value==0) emptyCount++;
+    for (let item of newBoard) {
+      item.state = "valid";
+      if (item.value == 0) emptyCount++;
     }
-    
-    for(let item of matches)
-      newBoard[item].state = "error"
 
-    this.setState({board: newBoard, gameState: emptyCount ? STATES.WON : STATES.PROGRESS})
+    for (let item of matches) newBoard[item].state = "error";
+
+    this.setState({
+      board: newBoard,
+      gameState: !emptyCount ? STATES.WON : STATES.PROGRESS
+    });
   };
 
   generateBoard = (isRoot, counter) => {
     let { board } = this.state;
     return (
       <div className="board">
-        {Array(3).fill().map((val, i) => (
+        {Array(3)
+          .fill()
+          .map((val, i) => (
             <div key={i} className="row">
-              {Array(3).fill().map((val, j) => {
+              {Array(3)
+                .fill()
+                .map((val, j) => {
                   if (isRoot) {
                     return (
                       <div key={j} className="square">
@@ -135,7 +138,7 @@ class SudokuApp extends Component {
                           min="1"
                           max="9"
                           value={value || ""}
-                          onChange={e => this.handleTextInput(elIdx,e)}
+                          onChange={e => this.handleTextInput(elIdx, e)}
                         />
                       </div>
                     );
@@ -152,12 +155,35 @@ class SudokuApp extends Component {
     );
   };
 
-  generatePauseScreen=()=>{
-    return <div><h2>PAUSED</h2></div>
-  }
+  generateScreen = () => {
+    if (this.state.gameState == STATES.PAUSED) {
+      return (
+        <div>
+          <h2>PAUSED</h2>
+        </div>
+      );
+    }
+
+    return <div className="main">{this.generateBoard(true, 0)}</div>;
+  };
+
+  generateControls = () => {
+    let text = this.state.gameState == STATES.PAUSED ? "RESUME" : "PAUSE";
+    return (
+      <div className="controls">
+        <button onClick={this.togglePause}>{text}</button>
+      </div>
+    );
+  };
+
+  addSecond = () => {
+    return setInterval(() => {
+      this.state.currentTime = Date.now();
+    }, 1000);
+  };
 
   render() {
-    const {gameState} = this.state
+    const { gameState } = this.state;
     return (
       <div className="App">
         <div className="App-header">
@@ -166,23 +192,10 @@ class SudokuApp extends Component {
         </div>
 
         <div className="content-body">
-          <div className="main">{
-            gameState== STATES.PAUSED ? 
-            this.generatePauseScreen() : 
-            this.generateBoard(true, 0)}
-            
-            <div className="notes"> 
-            {gameState == STATES.WON && <div>
-              <h2>VICTORY</h2>
-              </div>}
-            </div>
+          {this.generateScreen()}
+          {this.generateControls()}
 
-            <div className="controls">
-              <button onClick={this.togglePause}>PAUSE</button>
-            </div>
-
-            
-            </div>
+          <div className="notes" />
         </div>
       </div>
     );

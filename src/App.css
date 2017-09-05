@@ -28,7 +28,13 @@ input[type=number]::-webkit-inner-spin-button {
 
 .content-body{
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+}
+
+.controls{
+  
 }
 
 .main{
