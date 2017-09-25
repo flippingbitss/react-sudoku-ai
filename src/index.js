@@ -1,8 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
+import registerServiceWorker from "./registerServiceWorker";
+import "./index.css";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import SudokuApp from "./App";
+import { Game } from "./Game";
+
+ReactDOM.render(
+  <SudokuApp store={new Game()} />,
+  document.getElementById("root")
+);
 registerServiceWorker();
